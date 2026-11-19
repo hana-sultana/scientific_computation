@@ -1,0 +1,27 @@
+Mosquito random walk timings
+
+I ran both versions on Stampede3 with icpx. Each step the mosquito flies
+1 unit in a random direction. The vector version returns the step as a
+vector<float> and the array version returns it as an array<float,2>.
+
+n = 1000
+vector: final distance 47.0605, 84 usec
+array:  final distance 36.1279, 69 usec
+
+n = 100000
+vector: final distance 422.448, 7687 usec
+array:  final distance 180.578, 6193 usec
+
+n = 1000000
+vector: final distance 644.617, 76808 usec
+array:  final distance 206.257, 61418 usec
+
+n = 10000000
+vector: final distance 1918.6, 766452 usec
+array:  final distance 1774.06, 611914 usec
+
+The array version was faster every time, about 1.25 times faster.
+I think this is because the vector version makes a new vector on the
+heap every time random_step() is called, and the array doesn't need
+to allocate since its size is known at compile time.
+The time goes up about 10x when n goes up 10x for both versions.
